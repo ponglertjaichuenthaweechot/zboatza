@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ราคา BTC/USDT - Binance</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    #price {
+      font-size: 3em;
+      margin: 20px 0;
+    }
+    .refresh-time {
+      font-size: 0.9em;
+      color: #aaa;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📈 ราคา Bitcoin (BTC/USDT)</h1>
+  <div id="price">กำลังโหลด...</div>
+  <div class="refresh-time" id="time"></div>
+
+  <!-- กราฟ 15 นาทีจาก TradingView -->
+  <div id="tv-chart" style="height: 500px;"></div>
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script>
+    new TradingView.widget({
+      "container_id": "tv-chart",
+      "autosize": true,
+      "symbol": "BINANCE:BTCUSDT",
+      "interval": "15",
+      "timezone": "Asia/Bangkok",
+      "theme": "dark",
+      "style": "1",
+      "locale": "th",
+      "hide_top_toolbar": false,
+      "hide_legend": false,
+      "save_image": false,
+      "studies": [],
+      "details": true,
+      "withdateranges": true
+    });
+  </script>
+
+  <script>
+    async function fetchBTCPrice() {
+      try {
+        const res = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT");
+        const data = await res.json();
+        const price = parseFloat(data.price).toLocaleString('en-US', { minimumFractionDigits: 2 });
+        document.getElementById("price").textContent = `${price} USDT`;
+        document.getElementById("time").textContent = `อัปเดตล่าสุด: ${new Date().toLocaleTimeString('th-TH')}`;
+      } catch (error) {
+        document.getElementById("price").textContent = "เกิดข้อผิดพลาดในการโหลดข้อมูล";
+      }
+    }
+
+    fetchBTCPrice();
+    setInterval(fetchBTCPrice, 10000);
+  </script>
+</body>
+</html>
